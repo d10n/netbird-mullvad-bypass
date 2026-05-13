@@ -1,0 +1,15 @@
+[Unit]
+Description=Auto-refresh NetBird routed-network set for Mullvad bypass
+After=netbird-mullvad-bypass.service
+Requires=netbird-mullvad-bypass.service
+# PartOf cascades stop/restart to this service
+PartOf=netbird-mullvad-bypass.service
+
+[Service]
+Type=simple
+ExecStart=/usr/lib/netbird-mullvad-bypass/watch-routed-nets.sh
+Restart=on-failure
+RestartSec=3
+
+[Install]
+WantedBy=multi-user.target

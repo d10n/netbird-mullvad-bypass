@@ -1,0 +1,54 @@
+# Mark        Purpose                Origin
+# 0x0001bd00  NetBird control plane  netbird/client/net/net.go
+# 0x6d6f6c65  Mullvad split-tunnel   mullvadvpn-app/mullvad-types/src/lib.rs
+# 0x00000f41  Mullvad filter accept  mullvadvpn-app/talpid-core/src/split_tunnel/linux/mod.rs
+
+# Mullvad's rules have higher default priority, so re-mark NetBird packets to bypass Mullvad
+# priority -199 is after conntrack (-200) and before Mullvad (0)
+# The output chain uses `type route` so routing is re-evaluated after meta mark changes
+
+# Ensure the table exists before delete so `delete table` doesn't error if the table is absent
+table inet netbird-mullvad-bypass
+delete table inet netbird-mullvad-bypass
+
+table inet netbird-mullvad-bypass {
+    # NetBird-routed networks
+    # Filled by  netbird-mullvad-bypass.service
+    # Updated by netbird-mullvad-bypass-watch.service
+    # Empty here for idempotent `nft -f`
+    set nb_routed {
+        type ipv4_addr
+        flags interval
+    }
+
+    # Route bypass
+    chain output {
+        type route hook output priority -199;
+
+        # user-space packets to a NetBird-routed network
+        ip daddr @nb_routed ct mark set 0x00000f41 meta mark set 0x6d6f6c65
+
+        # NetBird-emitted packets
+        meta mark 0x0001bd00 ct mark set 0x00000f41 meta mark set 0x6d6f6c65
+
+        # inner overlay packets to wt0
+        oifname "wt0" ct mark set 0x00000f41
+    }
+
+    # Filter bypass
+    chain input {
+        type filter hook input priority -199;
+
+        # outer WireGuard packets from peers on the physical interface
+        udp dport 51820 iifname != "wg0-mullvad" ct mark set 0x00000f41
+
+        # inner overlay packets from peers on wt0 after WireGuard decapsulation
+        iifname "wt0" ct mark set 0x00000f41
+    }
+
+    # Re-routed packet masquerade
+    chain nat-postrouting {
+        type nat hook postrouting priority srcnat - 5;
+        meta mark 0x6d6f6c65 oifname "wt0" masquerade
+    }
+}

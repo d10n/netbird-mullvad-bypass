@@ -1,0 +1,11 @@
+/dist/
+/build/
+/packaging/arch/src/
+/packaging/arch/pkg/
+/packaging/arch/*.pkg.tar.zst
+/packaging/debian/.debhelper/
+/packaging/debian/debhelper-build-stamp
+/packaging/debian/files
+/packaging/debian/netbird-mullvad-bypass/
+/packaging/debian/netbird-mullvad-bypass.debhelper.log
+/packaging/debian/netbird-mullvad-bypass.substvars

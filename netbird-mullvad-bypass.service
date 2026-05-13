@@ -1,0 +1,18 @@
+[Unit]
+Description=NetBird bypass rules for Mullvad VPN
+After=netbird.service
+# Start the route watcher along with this service
+Wants=netbird-mullvad-bypass-watch.service
+
+[Service]
+Type=oneshot
+RemainAfterExit=yes
+ExecStart=/usr/bin/nft -f /usr/lib/netbird-mullvad-bypass/netbird-mullvad-bypass.nft
+ExecStartPost=/usr/lib/netbird-mullvad-bypass/populate-routed-nets.sh
+ExecStop=-/usr/bin/nft delete table inet netbird-mullvad-bypass
+
+[Install]
+WantedBy=multi-user.target
+# Enabling this unit also enables the watcher, so a single
+# `systemctl enable netbird-mullvad-bypass.service` activates both
+Also=netbird-mullvad-bypass-watch.service

@@ -1,0 +1,6 @@
+netbird-mullvad-bypass.service        usr/lib/systemd/system/
+netbird-mullvad-bypass-watch.service  usr/lib/systemd/system/
+netbird-mullvad-bypass.nft            usr/lib/netbird-mullvad-bypass/
+populate-routed-nets.sh               usr/lib/netbird-mullvad-bypass/
+watch-routed-nets.sh                  usr/lib/netbird-mullvad-bypass/
+README.md                             usr/share/doc/netbird-mullvad-bypass/

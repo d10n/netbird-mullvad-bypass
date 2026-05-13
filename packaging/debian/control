@@ -1,0 +1,17 @@
+Source: netbird-mullvad-bypass
+Section: net
+Priority: optional
+Maintainer: d10n <david@bitinvert.com>
+Build-Depends: debhelper-compat (= 13)
+Standards-Version: 4.6.2
+Homepage: https://github.com/d10n/netbird-mullvad-bypass
+Rules-Requires-Root: no
+
+Package: netbird-mullvad-bypass
+Architecture: all
+Depends: ${misc:Depends},
+         nftables,
+         iproute2
+Recommends: netbird,
+            mullvad-vpn
+Description: Allow Mullvad and Netbird to coexist

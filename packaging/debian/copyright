@@ -1,0 +1,8 @@
+Format: https://www.debian.org/doc/packaging-manuals/copyright-format/1.0/
+Upstream-Name: netbird-mullvad-bypass
+Upstream-Contact: d10n <david@bitinvert.com>
+Source: https://github.com/d10n/netbird-mullvad-bypass
+
+Files: *
+Copyright: d10n <david@bitinvert.com>
+License: MIT
